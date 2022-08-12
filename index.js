@@ -273,7 +273,8 @@ const inlineCss = async opt => {
       options.skipThirdPartyRequests && !request.url().startsWith(basePath),
     browser: browser,
     userAgent: options.userAgent
-  });
+  }).catch(e => {console.log('Minimize error: ', e);throw e;})
+  
   const criticalCss = minimalcssResult.finalCss;
   const criticalCssSize = Buffer.byteLength(criticalCss, "utf8");
 
@@ -283,7 +284,7 @@ const inlineCss = async opt => {
     );
     const cssArray = await Promise.all(
       stylesheets.map(async link => {
-        const response = await fetch(link.href);
+        const response = await fetch(link.href, {mode: 'no-cors'});
         return response.text();
       })
     );
