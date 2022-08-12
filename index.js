@@ -735,28 +735,31 @@ const run = async (userOptions, { fs } = { fs: nativeFs }) => {
       if (options.removeScriptTags) await removeScriptTags({ page });
       if (options.removeBlobs) await removeBlobs({ page });
       if (options.inlineCss) {
-        const { cssFiles } = await inlineCss({
-          page,
-          pageUrl,
-          options,
-          basePath,
-          browser
-        });
-
-        if (http2PushManifest) {
-          const filesToRemove = cssFiles
-            .filter(file => file.startsWith(basePath))
-            .map(file => file.replace(basePath, ""));
-
-          for (let i = http2PushManifestItems[route].length - 1; i >= 0; i--) {
-            const x = http2PushManifestItems[route][i];
-            filesToRemove.forEach(fileToRemove => {
-              if (x.link.startsWith(fileToRemove)) {
-                http2PushManifestItems[route].splice(i, 1);
-              }
-            });
+        try  {
+          const { cssFiles } = await inlineCss({
+            page,
+            pageUrl,
+            options,
+            basePath,
+            browser
+          });
+  
+          if (http2PushManifest) {
+            const filesToRemove = cssFiles
+              .filter(file => file.startsWith(basePath))
+              .map(file => file.replace(basePath, ""));
+  
+            for (let i = http2PushManifestItems[route].length - 1; i >= 0; i--) {
+              const x = http2PushManifestItems[route][i];
+              filesToRemove.forEach(fileToRemove => {
+                if (x.link.startsWith(fileToRemove)) {
+                  http2PushManifestItems[route].splice(i, 1);
+                }
+              });
+            }
           }
-        }
+        } catch(e) {console.log('Error processing Minimal CSS for page ' + pageUrl, e)}
+        
       }
 
       if (options.fixWebpackChunksIssue === "Parcel") {
