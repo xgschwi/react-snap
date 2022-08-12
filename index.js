@@ -273,7 +273,7 @@ const inlineCss = async opt => {
       options.skipThirdPartyRequests && !request.url().startsWith(basePath),
     browser: browser,
     userAgent: options.userAgent
-  }).catch(e => {console.log('Minimize error: ', e);throw e;})
+  }).catch(e => {throw e;})
   
   const criticalCss = minimalcssResult.finalCss;
   const criticalCssSize = Buffer.byteLength(criticalCss, "utf8");
@@ -758,7 +758,7 @@ const run = async (userOptions, { fs } = { fs: nativeFs }) => {
               });
             }
           }
-        } catch(e) {console.log('Error processing Minimal CSS for page ' + pageUrl, e)}
+        } catch(e) {console.log('🔥 Error processing Minimal CSS for page ' + route, e)}
         
       }
 
